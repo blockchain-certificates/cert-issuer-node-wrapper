@@ -1,6 +1,23 @@
 const { spawn } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+
+function saveFileToUnsignedCertificates (data) {
+  const targetPath = path.join(__dirname, '..', 'data/unsigned_certificates', 'sample.json');
+  fs.writeFile(targetPath, JSON.stringify(data), (err) => {
+    if (err) {
+      throw err;
+    }
+    console.log('The file has been saved!');
+  });
+}
 
 function verify (req, res) {
+  const cert = req.body.certificate;
+  console.log('now processing', cert);
+
+  saveFileToUnsignedCertificates(cert);
+
   return new Promise((resolve, reject) => {
     let stdout = [];
     let stderr = [];

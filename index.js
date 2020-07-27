@@ -1,10 +1,13 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const verify = require('./middlewares/verify');
-const app = express();
+const server = express();
+
+server.use(bodyParser.json({limit: '5mb'}));
 const port = 3000;
 
-app.get('/', (req, res) => res.send('Hello World!'));
+server.get('/', (req, res) => res.send('Hello World!'));
 
-app.post('/verify', verify);
+server.post('/verify', verify);
 
-app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
+server.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
