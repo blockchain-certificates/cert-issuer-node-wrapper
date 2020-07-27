@@ -1,6 +1,6 @@
 const { spawn } = require('child_process');
 
-function verify (req) {
+function verify (req, res) {
   return new Promise((resolve, reject) => {
     let stdout = [];
     let stderr = [];
@@ -18,11 +18,14 @@ function verify (req) {
     verificationProcess.stdin.end('');
 
     verificationProcess.on('close', code => {
-      stdout = Buffer.concat(stdout);
-      stderr = Buffer.concat(stderr);
+      stdout = stdout.join('').trim();
+      stderr = stderr.join('').trim();
 
       if (code === 0) {
-        return resolve({ stdout, stderr });
+        console.log(stdout, stderr);
+        console.log('success');
+        res.send({ success: true });
+        return resolve({ successResolve: true });
       }
 
       let error = new Error(`command exited with code: ${code}\n\n ${stdout}\n\n ${stderr}`);
@@ -32,7 +35,11 @@ function verify (req) {
       error.syscall = 'spawn python3';
       error.spawnargs = ['cert_issuer', '-c', 'conf.ini'];
 
-      return reject(error)
+      res.send({
+        success: false,
+        error
+      });
+      return reject(error);
     })
   });
 }
