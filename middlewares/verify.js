@@ -12,6 +12,18 @@ function saveFileToUnsignedCertificates (data) {
   });
 }
 
+async function getGeneratedCertificate () {
+  const targetPath = path.join(__dirname, '..', 'data/blockchain_certificates', 'sample.json');
+  return new Promise((resolve, reject) => {
+    fs.readFile(targetPath, 'utf8', (err, data) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(JSON.parse(data));
+    });
+  });
+}
+
 function verify (req, res) {
   const cert = req.body.certificate;
   console.log('now processing', cert);
@@ -34,14 +46,18 @@ function verify (req, res) {
 
     verificationProcess.stdin.end('');
 
-    verificationProcess.on('close', code => {
+    verificationProcess.on('close', async code => {
       stdout = stdout.join('').trim();
       stderr = stderr.join('').trim();
 
       if (code === 0) {
         console.log(stdout, stderr);
         console.log('success');
-        res.send({ success: true });
+        const certificate = await getGeneratedCertificate();
+        res.send({
+          success: true,
+          certificate
+        });
         return resolve({ successResolve: true });
       }
 
@@ -54,7 +70,8 @@ function verify (req, res) {
 
       res.send({
         success: false,
-        error
+        error,
+        stderr
       });
       return reject(error);
     })

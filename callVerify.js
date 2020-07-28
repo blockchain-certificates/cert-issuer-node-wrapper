@@ -26,7 +26,13 @@ async function callVerify () {
   }).catch (err => {
     throw new Error(err);
   });
-  console.log(res);
+  if (res.certificate) {
+    console.log(res.certificate);
+    return res.certificate;
+  }
+
+  console.error(res);
+  throw new Error('No certificate returned');
 }
 
 callVerify();
