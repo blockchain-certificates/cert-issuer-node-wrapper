@@ -54,6 +54,7 @@ function verify (req, res) {
         console.log(stdout, stderr);
         console.log('success');
         const certificate = await getGeneratedCertificate();
+        console.log(certificate);
         res.send({
           success: true,
           certificate

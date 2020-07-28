@@ -27,7 +27,7 @@ async function callVerify () {
     throw new Error(err);
   });
   if (res.certificate) {
-    console.log(res.certificate);
+    console.log(JSON.stringify(res.certificate));
     return res.certificate;
   }
 
