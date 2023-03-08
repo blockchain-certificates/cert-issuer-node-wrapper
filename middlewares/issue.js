@@ -31,7 +31,6 @@ function deleteTestCertificates (count) {
     targetPaths.push(path.join(__dirname, '..', UNSIGNED_CERTIFICATES_DIR, `sample-${i}.json`))
     targetPaths.push(path.join(__dirname, '..', SIGNED_CERTIFICATES_DIR, `sample-${i}.json`));
   }
-  console.log('delete files', targetPaths);
   targetPaths.forEach(path => fs.unlinkSync(path));
 }
 

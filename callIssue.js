@@ -10,6 +10,10 @@ async function readData (paths) {
 
 async function callIssue () {
   let filePaths = process.argv[2]?.split(',');
+  if (!filePaths) {
+    console.log('No certificates passed for issuance');
+    return;
+  }
   const certificates = await readData(filePaths);
   // console.log(`sending ${certificates.length} certificates to issuance`, certificates);
   const res = await fetch('http://localhost:3000/issue', {
