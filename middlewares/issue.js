@@ -58,7 +58,10 @@ function issue (req, res) {
   return new Promise((resolve, reject) => {
     let stdout = [];
     let stderr = [];
-    const verificationProcess = spawn('python3', ['cert_issuer', '-c', 'conf.ini']);
+    const spawnArgs = [`${ISSUER_PATH}/cert_issuer`, '-c', `${ISSUER_PATH}/conf.ini`]
+    const verificationProcess = spawn('python3', spawnArgs, {
+      cwd: ISSUER_PATH
+    });
     verificationProcess.stdout.pipe(process.stdout);
 
     verificationProcess.on('error', err => reject(new Error(err)));
@@ -89,7 +92,7 @@ function issue (req, res) {
       // emulate actual Child Process Errors
       error.path = 'python3';
       error.syscall = 'spawn python3';
-      error.spawnargs = ['cert_issuer', '-c', 'conf.ini'];
+      error.spawnargs = spawnArgs;
 
       res.send({
         success: false,
