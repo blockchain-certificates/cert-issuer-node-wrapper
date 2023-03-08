@@ -2,16 +2,24 @@ const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const ISSUER_PATH = '../cert-issuer';
+let ISSUER_PATH = '../cert-issuer';
 const UNSIGNED_CERTIFICATES_DIR = './data/unsigned_certificates';
 const SIGNED_CERTIFICATES_DIR = './data/blockchain_certificates';
 
+function setIssuerPath (pathToIssuer) {
+  ISSUER_PATH = pathToIssuer; // TODO: refactor to class to avoid global variable
+}
+
+function getIssuerPath () {
+  return ISSUER_PATH; // TODO: refactor to class to avoid global variable
+}
+
 function getUnsignedCertificatesPath (i) {
-  return path.join(__dirname, '..', ISSUER_PATH, UNSIGNED_CERTIFICATES_DIR, getFileName(i));
+  return path.join(__dirname, '..', getIssuerPath(), UNSIGNED_CERTIFICATES_DIR, getFileName(i));
 }
 
 function getSignedCertificatesPath (i) {
-  return path.join(__dirname, '..', ISSUER_PATH, SIGNED_CERTIFICATES_DIR, getFileName(i));
+  return path.join(__dirname, '..', getIssuerPath(), SIGNED_CERTIFICATES_DIR, getFileName(i));
 }
 
 function getFileName (i) {
@@ -50,6 +58,9 @@ function deleteTestCertificates (count) {
 
 function issue (req, res) {
   const certs = req.body.certificates;
+  if (req.body.issuerPath) {
+    setIssuerPath(req.body.issuerPath);
+  }
   // console.log('received request to issue', certs);
   const certificateCount = certs.length;
 
