@@ -2,8 +2,10 @@ const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
+const UNSIGNED_CERTIFICATES_DIR = '../data/unsigned_certificates';
+const SIGNED_CERTIFICATES_DIR = '../data/blockchain_certificates';
 function saveFileToUnsignedCertificates (data, index) {
-  const targetPath = path.join(__dirname, '..', '../data/unsigned_certificates', `sample-${index}.json`);
+  const targetPath = path.join(__dirname, '..', UNSIGNED_CERTIFICATES_DIR, `sample-${index}.json`);
   fs.writeFileSync(targetPath, JSON.stringify(data));
 }
 
@@ -12,7 +14,7 @@ async function getSignedCertificates (count) {
   // console.log(`retrieving ${count} certificates after issuance`);
 
   for (let i = 0; i < count; i++) {
-    targetPaths.push(path.join(__dirname, '..', '../data/blockchain_certificates', `sample-${i}.json`));
+    targetPaths.push(path.join(__dirname, '..', SIGNED_CERTIFICATES_DIR, `sample-${i}.json`));
   }
 
   // console.log('certificates are located at', targetPaths);
@@ -21,6 +23,16 @@ async function getSignedCertificates (count) {
     const certificates = targetPaths.map(path => fs.readFileSync(path, 'utf8'));
     resolve(certificates);
   });
+}
+
+function deleteTestCertificates (count) {
+  const targetPaths = [];
+  for (let i = 0; i < count; i++) {
+    targetPaths.push(path.join(__dirname, '..', UNSIGNED_CERTIFICATES_DIR, `sample-${i}.json`))
+    targetPaths.push(path.join(__dirname, '..', SIGNED_CERTIFICATES_DIR, `sample-${i}.json`));
+  }
+  console.log('delete files', targetPaths);
+  targetPaths.forEach(path => fs.unlinkSync(path));
 }
 
 function issue (req, res) {
@@ -55,6 +67,7 @@ function issue (req, res) {
           success: true,
           certificates
         });
+        deleteTestCertificates(certificateCount);
         return resolve({ successResolve: true });
       }
 
@@ -70,6 +83,7 @@ function issue (req, res) {
         error,
         stderr
       });
+      deleteTestCertificates(certificateCount);
       return reject(error);
     })
   });
