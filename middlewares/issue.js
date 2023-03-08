@@ -2,10 +2,24 @@ const { spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-const UNSIGNED_CERTIFICATES_DIR = '../data/unsigned_certificates';
-const SIGNED_CERTIFICATES_DIR = '../data/blockchain_certificates';
-function saveFileToUnsignedCertificates (data, index) {
-  const targetPath = path.join(__dirname, '..', UNSIGNED_CERTIFICATES_DIR, `sample-${index}.json`);
+const ISSUER_PATH = '../cert-issuer';
+const UNSIGNED_CERTIFICATES_DIR = './data/unsigned_certificates';
+const SIGNED_CERTIFICATES_DIR = './data/blockchain_certificates';
+
+function getUnsignedCertificatesPath (i) {
+  return path.join(__dirname, '..', ISSUER_PATH, UNSIGNED_CERTIFICATES_DIR, getFileName(i));
+}
+
+function getSignedCertificatesPath (i) {
+  return path.join(__dirname, '..', ISSUER_PATH, SIGNED_CERTIFICATES_DIR, getFileName(i));
+}
+
+function getFileName (i) {
+  return `sample-${i}.json`;
+}
+
+function saveFileToUnsignedCertificates (data, i) {
+  const targetPath = getUnsignedCertificatesPath(i);
   fs.writeFileSync(targetPath, JSON.stringify(data));
 }
 
@@ -14,7 +28,7 @@ async function getSignedCertificates (count) {
   // console.log(`retrieving ${count} certificates after issuance`);
 
   for (let i = 0; i < count; i++) {
-    targetPaths.push(path.join(__dirname, '..', SIGNED_CERTIFICATES_DIR, `sample-${i}.json`));
+    targetPaths.push(getSignedCertificatesPath(i));
   }
 
   // console.log('certificates are located at', targetPaths);
@@ -28,8 +42,8 @@ async function getSignedCertificates (count) {
 function deleteTestCertificates (count) {
   const targetPaths = [];
   for (let i = 0; i < count; i++) {
-    targetPaths.push(path.join(__dirname, '..', UNSIGNED_CERTIFICATES_DIR, `sample-${i}.json`))
-    targetPaths.push(path.join(__dirname, '..', SIGNED_CERTIFICATES_DIR, `sample-${i}.json`));
+    targetPaths.push(getUnsignedCertificatesPath(i));
+    targetPaths.push(getSignedCertificatesPath(i));
   }
   targetPaths.forEach(path => fs.unlinkSync(path));
 }
