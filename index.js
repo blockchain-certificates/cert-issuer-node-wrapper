@@ -1,13 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const verify = require('./middlewares/verify');
+const issue = require('./middlewares/issue');
 const server = express();
 
 server.use(bodyParser.json({limit: '5mb'}));
 const port = 3000;
 
-server.get('/', (req, res) => res.send('Hello World!'));
+server.post('/issue', issue);
 
-server.post('/verify', verify);
-
-server.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
+server.listen(port, () => console.log(`Cert-issuer-node-wrapper app listening at http://localhost:${port}`));
