@@ -17,7 +17,9 @@ if (command === 'help') {
 }
 
 if (command === 'start') {
-  exec(`node ${path.join(__dirname, '../index.js')}`, (err) => {
+  exec(`node ${path.join(__dirname, '../index.js')}`, {
+    cwd: path.join(__dirname, '..')
+  }, (err) => {
     if (err){
       console.error(err);
     }
@@ -26,7 +28,9 @@ if (command === 'start') {
 }
 
 if (command === 'stop') {
-  exec(`node ${path.join(__dirname, './kill-server.js')}`, (err) => {
+  exec(`node ${path.join(__dirname, './kill-server.js')}`, {
+    cwd: path.join(__dirname)
+  }, (err) => {
     if (err) {
       console.error(err);
     }
