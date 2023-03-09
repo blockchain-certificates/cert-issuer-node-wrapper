@@ -21,7 +21,7 @@ if (command === 'start') {
 }
 
 if (command === 'stop') {
-  console.log('stop command', pwd);
+  console.log('stop command', process.cwd());
   exec('node ./kill-server.js');
   return;
 }
