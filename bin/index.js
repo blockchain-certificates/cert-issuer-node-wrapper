@@ -4,6 +4,9 @@ const { exec } = require('child_process');
 
 const command = process.argv[1];
 
+console.log('command', command);
+console.log(process.argv);
+
 if (command === 'help') {
   console.log(`
   Main invocation: blockcerts-issuer
