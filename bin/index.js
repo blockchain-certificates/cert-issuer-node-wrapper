@@ -2,10 +2,7 @@
 
 const { exec } = require('child_process');
 
-const command = process.argv[1];
-
-console.log('command', command);
-console.log(process.argv);
+const command = process.argv[2];
 
 if (command === 'help') {
   console.log(`
@@ -15,12 +12,19 @@ if (command === 'help') {
     - start: start proxy server to cert-issuer
     - stop: stop server
   `)
+  return;
 }
 
 if (command === 'start') {
   exec('node ../index.js');
+  return;
 }
 
 if (command === 'stop') {
   exec('node ./kill-server.js');
+  return;
 }
+
+console.log('blockcerts-issuer unknown command', command, 'run `blockcerts-issuer help` for a list of available commands');
+
+
