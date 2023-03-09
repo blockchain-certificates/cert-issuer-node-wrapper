@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const { exec } = require('child_process');
+const path = require('path');
 
 const command = process.argv[2];
 
@@ -16,17 +17,19 @@ if (command === 'help') {
 }
 
 if (command === 'start') {
-  console.log('start command', process.env.PWD, process.cwd(), __dirname);
-  exec('node ../index.js', (err) => {
-    console.log(err);
+  exec(`node ${path.join(__dirname, '../index.js')}`, (err) => {
+    if (err){
+      console.error(err);
+    }
   });
   return;
 }
 
 if (command === 'stop') {
-  console.log('stop command', process.env.PWD, process.cwd(), __dirname);
-  exec('node ./kill-server.js', (err) => {
-    console.log(err);
+  exec(`node ${path.join(__dirname, './kill-server.js')}`, (err) => {
+    if (err) {
+      console.error(err);
+    }
   });
   return;
 }
