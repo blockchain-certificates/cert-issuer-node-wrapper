@@ -24,7 +24,6 @@ secureSettings.config
 connectionStrings.config
 
 
-**/bin
 **/obj
 **/packages
 
