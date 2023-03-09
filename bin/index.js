@@ -16,7 +16,7 @@ if (command === 'help') {
 }
 
 if (command === 'start') {
-  console.log('start command', process.env.PWD, process.cwd());
+  console.log('start command', process.env.PWD, process.cwd(), __dirname);
   exec('node ../index.js', (err) => {
     console.log(err);
   });
@@ -24,7 +24,7 @@ if (command === 'start') {
 }
 
 if (command === 'stop') {
-  console.log('stop command', process.env.PWD, process.cwd());
+  console.log('stop command', process.env.PWD, process.cwd(), __dirname);
   exec('node ./kill-server.js', (err) => {
     console.log(err);
   });
