@@ -16,12 +16,13 @@ if (command === 'help') {
 }
 
 if (command === 'start') {
+  console.log('start command', process.env.PWD, process.cwd());
   exec('node ../index.js');
   return;
 }
 
 if (command === 'stop') {
-  console.log('stop command', process.cwd());
+  console.log('stop command', process.env.PWD, process.cwd());
   exec('node ./kill-server.js');
   return;
 }
