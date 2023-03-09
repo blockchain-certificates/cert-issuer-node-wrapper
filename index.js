@@ -1,12 +1,10 @@
-#!/usr/bin/env node
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const issue = require('./middlewares/issue');
 const server = express();
+const port = require('./port');
 
 server.use(bodyParser.json({limit: '5mb'}));
-const port = 3000;
 
 server.post('/issue', issue);
 

@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "bin": {
-    "blockcerts-issuer": "index.js"
+    "blockcerts-issuer": "bin/index.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
