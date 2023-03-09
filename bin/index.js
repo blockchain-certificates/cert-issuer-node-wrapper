@@ -17,13 +17,17 @@ if (command === 'help') {
 
 if (command === 'start') {
   console.log('start command', process.env.PWD, process.cwd());
-  exec('node ../index.js');
+  exec('node ../index.js', (err) => {
+    console.log(err);
+  });
   return;
 }
 
 if (command === 'stop') {
   console.log('stop command', process.env.PWD, process.cwd());
-  exec('node ./kill-server.js');
+  exec('node ./kill-server.js', (err) => {
+    console.log(err);
+  });
   return;
 }
 
