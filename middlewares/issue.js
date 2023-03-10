@@ -15,11 +15,11 @@ function getIssuerPath () {
 }
 
 function getUnsignedCertificatesPath (i) {
-  return path.join(__dirname, '..', getIssuerPath(), UNSIGNED_CERTIFICATES_DIR, getFileName(i));
+  return path.join(process.cwd(), getIssuerPath(), UNSIGNED_CERTIFICATES_DIR, getFileName(i));
 }
 
 function getSignedCertificatesPath (i) {
-  return path.join(__dirname, '..', getIssuerPath(), SIGNED_CERTIFICATES_DIR, getFileName(i));
+  return path.join(process.cwd(), getIssuerPath(), SIGNED_CERTIFICATES_DIR, getFileName(i));
 }
 
 function getFileName (i) {
@@ -28,7 +28,12 @@ function getFileName (i) {
 
 function saveFileToUnsignedCertificates (data, i) {
   const targetPath = getUnsignedCertificatesPath(i);
-  fs.writeFileSync(targetPath, JSON.stringify(data));
+  // console.log('save file to', targetPath);
+  try {
+    fs.writeFileSync(targetPath, JSON.stringify(data));
+  } catch (e) {
+    console.error('Error saving file at', targetPath, e);
+  }
 }
 
 async function getSignedCertificates (count) {

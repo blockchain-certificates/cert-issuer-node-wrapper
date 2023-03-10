@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { exec } = require('child_process');
+const { exec, spawn } = require('child_process');
 const path = require('path');
 
 const command = process.argv[2];
@@ -17,13 +17,16 @@ if (command === 'help') {
 }
 
 if (command === 'start') {
-  exec(`node ${path.join(__dirname, '../index.js')}`, {
-    cwd: path.join(__dirname, '..')
-  }, (err) => {
-    if (err){
-      console.error(err);
-    }
+  console.log('set cwd at', path.join(__dirname, '../../..'));
+  console.log('execution dirname', __dirname);
+  const serverProcess = spawn('node', [path.join(__dirname, '../index.js')], {
+    cwd: path.join(__dirname, '../../..')
   });
+
+  serverProcess.stdout.on('data', (data) => {
+    console.log(`stdout: ${data}`);
+  });
+  serverProcess.on('error', console.log);
   return;
 }
 
