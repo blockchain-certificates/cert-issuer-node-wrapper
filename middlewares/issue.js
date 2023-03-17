@@ -14,12 +14,24 @@ function getIssuerPath () {
   return ISSUER_PATH; // TODO: refactor to class to avoid global variable
 }
 
+function isRelativePath (path) {
+  return path.startsWith('./') || path.startsWith('../');
+}
+
+function getRootPath () {
+  if (isRelativePath(getIssuerPath())) {
+    return path.join(process.cwd(), getIssuerPath());
+  }
+
+  return getIssuerPath();
+}
+
 function getUnsignedCertificatesPath (i) {
-  return path.join(process.cwd(), getIssuerPath(), UNSIGNED_CERTIFICATES_DIR, getFileName(i));
+  return path.join(getRootPath(), UNSIGNED_CERTIFICATES_DIR, getFileName(i));
 }
 
 function getSignedCertificatesPath (i) {
-  return path.join(process.cwd(), getIssuerPath(), SIGNED_CERTIFICATES_DIR, getFileName(i));
+  return path.join(getRootPath(), SIGNED_CERTIFICATES_DIR, getFileName(i));
 }
 
 function getFileName (i) {
