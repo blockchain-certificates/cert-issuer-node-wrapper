@@ -40,7 +40,7 @@ function getFileName (i) {
 
 function saveFileToUnsignedCertificates (data, i) {
   const targetPath = getUnsignedCertificatesPath(i);
-  // console.log('save file to', targetPath);
+  console.log('save file to', targetPath);
   try {
     fs.writeFileSync(targetPath, JSON.stringify(data));
   } catch (e) {
@@ -50,13 +50,13 @@ function saveFileToUnsignedCertificates (data, i) {
 
 async function getSignedCertificates (count) {
   let targetPaths = [];
-  // console.log(`retrieving ${count} certificates after issuance`);
+  console.log(`retrieving ${count} certificates after issuance`);
 
   for (let i = 0; i < count; i++) {
     targetPaths.push(getSignedCertificatesPath(i));
   }
 
-  // console.log('certificates are located at', targetPaths);
+  console.log('certificates are located at', targetPaths);
 
   return new Promise((resolve, reject) => {
     const certificates = targetPaths.map(path => fs.readFileSync(path, 'utf8'));
@@ -78,7 +78,7 @@ function issue (req, res) {
   if (req.body.issuerPath) {
     setIssuerPath(req.body.issuerPath);
   }
-  // console.log('received request to issue', certs);
+  console.log('received request to issue', certs);
   const certificateCount = certs.length;
 
   certs.forEach((cert, index) => saveFileToUnsignedCertificates(cert, index));
