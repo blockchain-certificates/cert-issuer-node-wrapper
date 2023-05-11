@@ -1,4 +1,4 @@
-const { spawn } = require('child_process');
+const { spawn, exec } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -86,10 +86,19 @@ function issue (req, res) {
   return new Promise((resolve, reject) => {
     let stdout = [];
     let stderr = [];
+    let pythonPath;
+    exec('which python3', (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error finding path to python3: ${error}`);
+        return;
+      }
+
+      pythonPath = stdout.trim();
+      console.log(`Path to python3: ${pythonPath}`);
+    });
     const spawnArgs = [`${ISSUER_PATH}/cert_issuer`, '-c', `${ISSUER_PATH}/conf.ini`]
-    const verificationProcess = spawn('python3', spawnArgs, {
-      cwd: ISSUER_PATH,
-      shell: true
+    const verificationProcess = spawn(pythonPath, spawnArgs, {
+      cwd: ISSUER_PATH
     });
     verificationProcess.stdout.pipe(process.stdout);
 
