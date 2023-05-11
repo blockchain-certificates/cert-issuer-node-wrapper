@@ -88,7 +88,8 @@ function issue (req, res) {
     let stderr = [];
     const spawnArgs = [`${ISSUER_PATH}/cert_issuer`, '-c', `${ISSUER_PATH}/conf.ini`]
     const verificationProcess = spawn('python3', spawnArgs, {
-      cwd: ISSUER_PATH
+      cwd: ISSUER_PATH,
+      shell: true
     });
     verificationProcess.stdout.pipe(process.stdout);
 
