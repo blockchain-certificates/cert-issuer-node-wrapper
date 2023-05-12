@@ -96,6 +96,7 @@ function issue (req, res) {
       pythonPath = stdout.trim();
       console.log(`Path to python3: ${pythonPath}`);
     });
+    console.log(pythonPath);
     const spawnArgs = [`${ISSUER_PATH}/cert_issuer`, '-c', `${ISSUER_PATH}/conf.ini`]
     const verificationProcess = spawn(pythonPath, spawnArgs, {
       cwd: ISSUER_PATH
@@ -109,6 +110,13 @@ function issue (req, res) {
 
     verificationProcess.stdout.on('data', data => stdout.push(data));
     verificationProcess.stderr.on('data', data => stderr.push(data));
+
+    verificationProcess.stdout.on('end', () => {
+      console.log('Issue.js stdout end:', Buffer.concat(stdout).toString());
+    });
+    verificationProcess.stderr.on('end', () => {
+      console.log('Issue.js stderr end (ERROR):', Buffer.concat(stderr).toString());
+    });
 
     verificationProcess.stdin.end('');
 
