@@ -87,6 +87,7 @@ function issue (req, res) {
     let stdout = [];
     let stderr = [];
     let pythonPath;
+    exec('echo "YOYOYOYOYO!"');
     exec('which python3', (error, stdout, stderr) => {
       if (error) {
         console.error(`Error finding path to python3: ${error}`);
