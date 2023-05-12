@@ -22,9 +22,22 @@ if (command === 'start') {
   const serverProcess = spawn('node', [path.join(__dirname, '../index.js')], {
     cwd: path.join(__dirname, '../../..')
   });
+  let stdoutChunks = [], stderrChunks = [];
 
   serverProcess.stdout.on('data', (data) => {
-    console.log(`stdout: ${data}`);
+    stdoutChunks = stdoutChunks.concat(data);
+  });
+  serverProcess.stdout.on('end', () => {
+    const stdoutContent = Buffer.concat(stdoutChunks).toString();
+    console.log('cert-issuer-node-wrapper stdout:', stdoutContent);
+  });
+
+  serverProcess.stderr.on('data', (data) => {
+    stderrChunks = stderrChunks.concat(data);
+  });
+  serverProcess.stderr.on('end', () => {
+    const stderrContent = Buffer.concat(stderrChunks).toString();
+    console.log('cert-issuer-node-wrapper ERROR:', stderrContent);
   });
   serverProcess.on('error', console.log);
   return;
