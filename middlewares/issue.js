@@ -73,6 +73,22 @@ function deleteTestCertificates (count) {
   targetPaths.forEach(path => fs.unlinkSync(path));
 }
 
+function getPythonPath () {
+  return new Promise((resolve, reject) => {
+    exec('which python3', (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error finding path to python3: ${error}`);
+        reject(`Error finding path to python3: ${error}`);
+        return;
+      }
+
+      const pythonPath = stdout.trim();
+      console.log(`Found path to python3: ${pythonPath}`);
+      resolve(pythonPath);
+    });
+  });
+}
+
 function issue (req, res) {
   const certs = req.body.certificates;
   if (req.body.issuerPath) {
@@ -83,22 +99,12 @@ function issue (req, res) {
 
   certs.forEach((cert, index) => saveFileToUnsignedCertificates(cert, index));
 
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     let stdout = [];
     let stderr = [];
-    let pythonPath;
-    exec('echo "YOYOYOYOYO!"');
-    exec('which python3', (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error finding path to python3: ${error}`);
-        return;
-      }
-
-      pythonPath = stdout.trim();
-      console.log(`Path to python3: ${pythonPath}`);
-    });
-    console.log(pythonPath);
+    const pythonPath = await getPythonPath();
     const spawnArgs = [`${ISSUER_PATH}/cert_issuer`, '-c', `${ISSUER_PATH}/conf.ini`]
+    console.log('Spawning python from path:', pythonPath, 'with args', spawnArgs);
     const verificationProcess = spawn(pythonPath, spawnArgs, {
       cwd: ISSUER_PATH
     });
