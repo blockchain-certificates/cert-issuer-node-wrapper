@@ -70,7 +70,11 @@ function deleteTestCertificates (count) {
     targetPaths.push(getUnsignedCertificatesPath(i));
     targetPaths.push(getSignedCertificatesPath(i));
   }
-  targetPaths.forEach(path => fs.unlinkSync(path));
+  targetPaths.forEach(path => {
+    try {
+      fs.unlinkSync(path)
+    } catch {}
+  });
 }
 
 function getPythonPath () {
@@ -110,51 +114,54 @@ function issue (req, res) {
     });
     verificationProcess.stdout.pipe(process.stdout);
 
-    verificationProcess.on('error', err => reject(new Error(err)));
-    verificationProcess.stdout.on('error', err => reject(new Error(err)));
-    verificationProcess.stderr.on('error', err => reject(new Error(err)));
-    verificationProcess.stdin.on('error', err => reject(new Error(err)));
+    try {
+      verificationProcess.on('error', err => {
+        console.log('python script error', err);
+      });
+      verificationProcess.stdout.on('error', err => reject(new Error(err)));
+      verificationProcess.stderr.on('error', err => reject(new Error(err)));
+      verificationProcess.stdin.on('error', err => reject(new Error(err)));
 
-    verificationProcess.stdout.on('data', data => stdout.push(data));
-    verificationProcess.stderr.on('data', data => stderr.push(data));
+      verificationProcess.stdout.on('data', data => stdout.push(data));
+      verificationProcess.stderr.on('data', data => stderr.push(data));
 
-    verificationProcess.stdout.on('end', () => {
-      console.log('Issue.js stdout end:', Buffer.concat(stdout).toString());
-    });
-    verificationProcess.stderr.on('end', () => {
-      console.log('Issue.js stderr end (ERROR):', Buffer.concat(stderr).toString());
-    });
+      verificationProcess.stdout.on('end', () => {
+        console.log('Issue.js stdout end:', Buffer.concat(stdout).toString());
+      });
+      verificationProcess.stderr.on('end', () => {
+        console.log('Issue.js stderr end (ERROR):', Buffer.concat(stderr).toString());
+      });
 
-    verificationProcess.stdin.end('');
+      verificationProcess.stdin.end('');
 
-    verificationProcess.on('close', async code => {
-      stdout = stdout.join('').trim();
-      stderr = stderr.join('').trim();
-      if (code === 0) {
-        const certificates = await getSignedCertificates(certificateCount);
+      verificationProcess.on('exit', code => {
+        if (code !== 0) {
+          console.log('exit event in python cert-issuer', code);
+        }
+      });
+
+      verificationProcess.on('close', async code => {
+        stdout = stdout.join('').trim();
+        stderr = stderr.join('').trim();
+        if (code === 0) {
+          const certificates = await getSignedCertificates(certificateCount);
+          res.send({
+            success: true,
+            certificates
+          });
+          deleteTestCertificates(certificateCount);
+          return resolve({ successResolve: true });
+        }
+
         res.send({
-          success: true,
-          certificates
+          success: false,
+          stderr
         });
         deleteTestCertificates(certificateCount);
-        return resolve({ successResolve: true });
-      }
-
-      let error = new Error(`command exited with code: ${code}\n\n ${stdout}\n\n ${stderr}`);
-
-      // emulate actual Child Process Errors
-      error.path = 'python3';
-      error.syscall = 'spawn python3';
-      error.spawnargs = spawnArgs;
-
-      res.send({
-        success: false,
-        error,
-        stderr
       });
-      deleteTestCertificates(certificateCount);
-      return reject(error);
-    })
+    } catch (e) {
+      console.log('caught server error', e);
+    }
   });
 }
 

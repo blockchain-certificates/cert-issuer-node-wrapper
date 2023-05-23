@@ -39,13 +39,13 @@ async function callIssue () {
   const isHelp = getHelpFromArgv();
   if (isHelp) {
     console.log(`use a space separated command list, ie: --command value
-    
+
     Argument list:
-      
+
       --help: display this text
-      
+
       --issuer_path: relative path to the cert-issuer directory (default '../cert-issuer')
-      
+
       --files: absolute path to file(s) to issue, a comma separated (no space) list in the case of multiple files
     `);
     return;
@@ -72,7 +72,7 @@ async function callIssue () {
     return decoded;
   }).catch (err => {
     // throw new Error(err);
-    console.error('Error:', err);
+    console.error('callIssue.js error while fetching:', err);
   });
   if (res.certificates) {
     const response = res.certificates.map(signedCertificate => JSON.parse(signedCertificate));
@@ -81,7 +81,7 @@ async function callIssue () {
   }
 
   console.error(res);
-  throw new Error('No certificate returned');
+  console.error('No certificate returned');
 }
 
 callIssue();
