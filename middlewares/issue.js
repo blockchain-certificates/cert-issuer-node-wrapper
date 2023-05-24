@@ -108,7 +108,7 @@ function issue (req, res) {
     let stderr = [];
     const pythonPath = await getPythonPath();
     const spawnArgs = [`${ISSUER_PATH}/cert_issuer`, '-c', `${ISSUER_PATH}/conf.ini`]
-    console.log('Spawning python from path:', pythonPath, 'with args', spawnArgs);
+    // console.log('Spawning python from path:', pythonPath, 'with args', spawnArgs);
     const verificationProcess = spawn(pythonPath, spawnArgs, {
       cwd: ISSUER_PATH
     });
