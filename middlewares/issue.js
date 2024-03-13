@@ -103,7 +103,9 @@ function issue (req, res) {
 
   certs.forEach((cert, index) => saveFileToUnsignedCertificates(cert, index));
   console.log('list files saved at', path.join(getRootPath(), UNSIGNED_CERTIFICATES_DIR), ':');
-  spawn('ls', ['-la', path.join(getRootPath(), UNSIGNED_CERTIFICATES_DIR)])
+  exec(`ls -la ${path.join(getRootPath(), UNSIGNED_CERTIFICATES_DIR)}`, function (err, stdout ,stderr) {
+    console.log(`ls -la ${path.join(getRootPath(), UNSIGNED_CERTIFICATES_DIR)}:`, stdout);
+  })
   return new Promise(async (resolve, reject) => {
     let stdout = [];
     let stderr = [];
