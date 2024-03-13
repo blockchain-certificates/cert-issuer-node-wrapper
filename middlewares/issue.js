@@ -102,7 +102,8 @@ function issue (req, res) {
   const certificateCount = certs.length;
 
   certs.forEach((cert, index) => saveFileToUnsignedCertificates(cert, index));
-
+  console.log('list files saved at', path.join(getRootPath(), UNSIGNED_CERTIFICATES_DIR), ':');
+  spawn('ls', ['-la', path.join(getRootPath(), UNSIGNED_CERTIFICATES_DIR)])
   return new Promise(async (resolve, reject) => {
     let stdout = [];
     let stderr = [];
