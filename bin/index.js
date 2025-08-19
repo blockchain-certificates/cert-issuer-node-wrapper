@@ -19,27 +19,26 @@ if (command === 'help') {
 if (command === 'start') {
   console.log('set cwd at', path.join(__dirname, '../../..'));
   console.log('execution dirname', __dirname);
+  console.log('starting cert-issuer-node-wrapper server with command:', 'node', path.join(__dirname, '../index.js'));
   const serverProcess = spawn('node', [path.join(__dirname, '../index.js')], {
     cwd: path.join(__dirname, '../../..')
   });
-  let stdoutChunks = [], stderrChunks = [];
 
   serverProcess.stdout.on('data', (data) => {
-    stdoutChunks = stdoutChunks.concat(data);
-  });
-  serverProcess.stdout.on('end', () => {
-    const stdoutContent = Buffer.concat(stdoutChunks).toString();
-    console.log('cert-issuer-node-wrapper stdout:', stdoutContent);
+    process.stdout.write(`[cert-issuer-node-wrapper stdout] ${data}`);
   });
 
   serverProcess.stderr.on('data', (data) => {
-    stderrChunks = stderrChunks.concat(data);
+    process.stderr.write(`[cert-issuer-node-wrapper stderr] ${data}`);
   });
-  serverProcess.stderr.on('end', () => {
-    const stderrContent = Buffer.concat(stderrChunks).toString();
-    console.log('cert-issuer-node-wrapper ERROR:', stderrContent);
+
+  serverProcess.on('error', (err) => {
+    console.error('[cert-issuer-node-wrapper error]', err);
   });
-  serverProcess.on('error', console.log);
+
+  serverProcess.on('close', (code) => {
+    console.log(`\n[cert-issuer-node-wrapper exited with code ${code}]`);
+  });
   return;
 }
 
